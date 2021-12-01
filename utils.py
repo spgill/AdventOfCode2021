@@ -98,7 +98,7 @@ def printMessage(message: str) -> None:
 
 def printAnswer(part: int, value: typing.Any) -> None:
     """Print the solution to Part `part` of the puzzle"""
-    printMessage(f"{Fore.GREEN}Answer (Part {part}):{Style.RESET_ALL} {value}")
+    printMessage(f"{Fore.GREEN}Part {part} Answer:{Style.RESET_ALL} {value}")
 
 
 def printWarning(message: str) -> None:
