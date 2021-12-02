@@ -20,7 +20,7 @@ def part1(puzzleInput: str):
     numbers = [int(line) for line in puzzleInput.strip().splitlines()]
     # Just count the increasing numbers in the series
     count = countIncreasingNumbers(numbers)
-    utils.printAnswer(1, str(count))
+    utils.printAnswer(str(count))
     return numbers
 
 
@@ -31,7 +31,7 @@ def part2(_, numbers: list[int]):
         sum(window) for window in more_itertools.windowed(numbers, n=3)
     ]
     count = countIncreasingNumbers(movingSums)
-    utils.printAnswer(2, str(count))
+    utils.printAnswer(str(count))
 
 
 utils.start()

@@ -22,7 +22,7 @@ def part1(puzzleInput: str):
         elif direction == "up":
             depth -= magnitude
 
-    utils.printAnswer(1, distance * depth)
+    utils.printAnswer(distance * depth)
 
     # Pass parsed instructions to part 2
     return instructions
@@ -43,7 +43,7 @@ def part2(_, instructions: list[tuple[str, int]]):
         elif direction == "up":
             aim -= magnitude
 
-    utils.printAnswer(2, distance * depth)
+    utils.printAnswer(distance * depth)
 
 
 utils.start()

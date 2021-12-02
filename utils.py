@@ -11,6 +11,7 @@ import typer
 
 
 # Global variables
+_quietMode: bool = False
 _part1SolutionFunc: typing.Optional[typing.Callable] = None
 _part2SolutionFunc: typing.Optional[typing.Callable] = None
 _solutionOptions: dict[str, typing.Union[str, bool]] = {}
@@ -67,6 +68,12 @@ def _cli(
     input: typer.FileBinaryRead = typer.Argument(
         ..., help="Puzzle input file. Use '-' to read from STDIN."
     ),
+    quiet: bool = typer.Option(
+        False,
+        "-q",
+        "--quiet",
+        help="Enabled quiet mode. Suppresses messages and warnings. Errors will still be written to STDERR.",
+    ),
     part2: bool = typer.Option(
         True, help="Execute the Part 2 solution. Part 1 will ALWAYS execute."
     ),
@@ -88,7 +95,8 @@ def _cli(
         value = True if len(entrySplit) == 1 else entrySplit[1]
         _solutionOptions[key] = value
 
-    global _part1SolutionFunc, _part2SolutionFunc
+    global _quietMode, _part1SolutionFunc, _part2SolutionFunc
+    _quietMode = quiet
 
     # Run the part 1 solution
     if _part1SolutionFunc is None:
@@ -112,12 +120,16 @@ def start():
 
 
 def printMessage(message: str) -> None:
-    typer.echo(message)
+    if not _quietMode:
+        typer.echo(message)
 
 
-def printAnswer(part: int, value: typing.Any) -> None:
+def printAnswer(value: typing.Any) -> None:
     """Print the solution to Part `part` of the puzzle"""
-    printMessage(f"{Fore.GREEN}Part {part} Answer:{Style.RESET_ALL} {value}")
+    if _quietMode:
+        typer.echo(f"{value}")
+    else:
+        typer.echo(f"{Fore.GREEN}Answer:{Style.RESET_ALL} {value}")
 
 
 def printWarning(message: str) -> None:
@@ -135,15 +147,16 @@ def printComputationWarningWithPrompt() -> None:
     Print a warning about computation time,
     prompting the user to continue.
     """
-    typer.confirm(
-        f"{Fore.YELLOW}Warning:{Style.RESET_ALL} "
-        "It may take a very long while to compute answers. Continue?",
-        default=True,
-        abort=True,
-    )
+    if not _quietMode:
+        typer.confirm(
+            f"{Fore.YELLOW}Warning:{Style.RESET_ALL} "
+            "It may take a very long while to compute answers. Continue?",
+            default=True,
+            abort=True,
+        )
 
 
 def printError(message: str) -> None:
     """Print an error in red and abort execution"""
-    printMessage(f"{Fore.RED}Error: {Style.RESET_ALL}{message}")
+    typer.echo(f"{Fore.RED}Error: {Style.RESET_ALL}{message}", err=True)
     exit(1)
