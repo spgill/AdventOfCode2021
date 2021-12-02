@@ -10,9 +10,15 @@ from colorama import Fore, Style
 import typer
 
 
-# Global variables containing the solution functions
+# Global variables
 part1SolutionFunc: typing.Optional[typing.Callable] = None
 part2SolutionFunc: typing.Optional[typing.Callable] = None
+solutionOptions: dict[str, typing.Union[str, bool]] = {}
+
+
+def getOption(key: str) -> typing.Union[str, bool, None]:
+    """Get the value of a CLI solution option. If not defined, will return `None`."""
+    return solutionOptions.get(key, None)
 
 
 def part1(func: typing.Callable[[str], typing.Any]):
@@ -64,10 +70,23 @@ def _cli(
     part2: bool = typer.Option(
         True, help="Execute the Part 2 solution. Part 1 will ALWAYS execute."
     ),
+    option: list[str] = typer.Option(
+        [],
+        "-o",
+        "--option",
+        help="Provide an execution option to the solution methods. Syntax is '--option KEY=VALUE' or '--option FLAG' for a boolean flag. Available execution options should be documented in the solution script itself.",
+    ),
 ):
     """Internal method for executing the puzzle solutions."""
     # First we need to read and decode the puzzle input.
     inputData: str = input.read().decode()
+
+    # Next, we should parse out any key=value options
+    for entry in option:
+        entrySplit = entry.split("=")
+        key = entrySplit[0]
+        value = True if len(entrySplit) == 1 else entrySplit[1]
+        solutionOptions[key] = value
 
     global part1SolutionFunc, part2SolutionFunc
 
